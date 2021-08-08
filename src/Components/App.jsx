@@ -1,36 +1,42 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 import ContactAddForm from './ContactAddForm/ContactAddForm'
 import ContactListItem from './ContactListItem/ContactListItem'
 import ContactList from './ContactList/ContactList'
 import Filter from './Filter/Filter'
-import { v4 as uuidv4 } from 'uuid'
+import { deleteContact } from '../redux/contacts/contactsSlice'
+
+import { useSelector, useDispatch } from 'react-redux'
 
 export default function App() {
-  const [contacts, setContacts] = useState([
-    { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-    { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-    { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-    { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  ])
+  // const [contacts, setContacts] = useState([
+  //   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+  //   { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+  //   { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+  //   { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+  // ])
 
-  const [filter, setFilter] = useState('')
+  const contacts = useSelector((state) => state.contacts.items)
+  const filter = useSelector((state) => state.contacts.filter)
+  const dispatch = useDispatch()
 
-  const addContact = (name, number) => {
-    const contactsHaveDuplicate = contacts.find(
-      (contact) => contact.name === name,
-    )
-    contactsHaveDuplicate
-      ? alert(`${name} is already in contacts`)
-      : setContacts((prevState) => [
-          ...prevState,
-          { id: uuidv4(), name: name, number: number },
-        ])
-  }
+  // const [filter, setFilter] = useState('')
 
-  const handleFilterChange = ({ target }) => {
-    const filterInput = target.value
-    setFilter(filterInput)
-  }
+  // const addContact = (name, number) => {
+  // const contactsHaveDuplicate = contacts.find(
+  //   (contact) => contact.name === name,
+  // )
+  // contactsHaveDuplicate
+  //   ? alert(`${name} is already in contacts`)
+  //   : setContacts((prevState) => [
+  //       ...prevState,
+  //       { id: uuidv4(), name: name, number: number },
+  //     ])
+  // }
+
+  // const handleFilterChange = ({ target }) => {
+  //   const filterInput = target.value
+  //   setFilter(filterInput)
+  // }
 
   function getFilteredNames() {
     const normilizedFilterState = filter.toLowerCase()
@@ -40,21 +46,22 @@ export default function App() {
     )
   }
 
-  const deleteContact = (contactId) => {
-    setContacts((prevState) =>
-      [...prevState].filter((contact) => contact.id !== contactId),
-    )
-  }
+  // const deleteContact = (contactId) => {
+  //   setContacts((prevState) =>
+  //     [...prevState].filter((contact) => contact.id !== contactId),
+  //   )
+  // }
 
   return (
     <>
       <h2>Phonebook</h2>
 
-      <ContactAddForm onSubmit={addContact} />
+      <ContactAddForm />
 
       <h2>Contacts</h2>
 
-      <Filter filter={filter} handleFilterChange={handleFilterChange}></Filter>
+      {/* <Filter filter={filter} handleFilterChange={handleFilterChange}></Filter> */}
+      <Filter />
 
       <ContactList>
         {getFilteredNames().map(({ id, name, number }) => (
@@ -62,7 +69,7 @@ export default function App() {
             key={id}
             name={name}
             number={number}
-            onDelBtnClick={() => deleteContact(id)}
+            onDelBtnClick={() => dispatch(deleteContact(id))}
           />
         ))}
       </ContactList>

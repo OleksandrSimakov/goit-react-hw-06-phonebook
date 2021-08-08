@@ -1,6 +1,12 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 import ContactAddFormEl from './ContactAddForm.styled'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  addContact,
+  contactsSelector,
+} from '../../redux/contacts/contactsSlice'
+import { v4 as uuidv4 } from 'uuid'
 
 const styles = {
   input: {
@@ -21,30 +27,46 @@ const styles = {
   },
 }
 
-export default function ContactAddForm({ onSubmit }) {
-  const [name, setName] = useState('')
-  const [number, setNumber] = useState('')
+export default function ContactAddForm() {
+  // const [name, setName] = useState('')
+  // const [number, setNumber] = useState('')
+
+  const dispatch = useDispatch()
+  const contacts = useSelector(contactsSelector)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    onSubmit(name, number)
-    setName('')
-    setNumber('')
+    const contactsHaveDuplicate = contacts.find(
+      (contact) => contact.name === e.target.elements.name.value,
+    )
+    contactsHaveDuplicate
+      ? alert(`${e.target.elements.name.value} is already in contacts`)
+      : // onSubmit(name, number)
+        // setName('')
+        // setNumber('')
+        dispatch(
+          addContact({
+            id: uuidv4(),
+            name: e.target.elements.name.value,
+            number: e.target.elements.number.value,
+          }),
+        )
+    e.target.reset()
   }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    switch (name) {
-      case 'name':
-        setName(value)
-        break
-      case 'number':
-        setNumber(value)
-        break
-      default:
-        return
-    }
-  }
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target
+  //   switch (name) {
+  //     case 'name':
+  //       setName(value)
+  //       break
+  //     case 'number':
+  //       setNumber(value)
+  //       break
+  //     default:
+  //       return
+  //   }
+  // }
 
   return (
     <>
@@ -58,8 +80,8 @@ export default function ContactAddForm({ onSubmit }) {
             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
             required
-            value={name}
-            onChange={handleChange}
+            // value={name}
+            // onChange={handleChange}
           />
         </label>
         <label style={styles.label}>
@@ -69,8 +91,8 @@ export default function ContactAddForm({ onSubmit }) {
             type="tel"
             name="number"
             required
-            value={number}
-            onChange={handleChange}
+            // value={number}
+            // onChange={handleChange}
           ></input>
         </label>
         <button type="submit" style={styles.button}>
@@ -81,9 +103,9 @@ export default function ContactAddForm({ onSubmit }) {
   )
 }
 
-ContactAddForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-}
+// ContactAddForm.propTypes = {
+//   onSubmit: PropTypes.func.isRequired,
+// }
 
 // export default class ContactAddForm extends Component {
 //   static propTypes = {

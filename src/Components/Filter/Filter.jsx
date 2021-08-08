@@ -1,6 +1,9 @@
 import FilterEl from './Filter.styled'
 import PropTypes from 'prop-types'
 
+import { useDispatch } from 'react-redux'
+import { filterContact } from '../../redux/contacts/contactsSlice'
+
 const styles = {
   input: {
     display: 'block',
@@ -8,7 +11,14 @@ const styles = {
   },
 }
 
-function Filter({ filter, handleFilterChange }) {
+function Filter() {
+  const dispatch = useDispatch()
+
+  const handleFilterChange = ({ target }) => {
+    const filterInput = target.value
+    dispatch(filterContact(filterInput))
+  }
+
   return (
     <FilterEl>
       <label>
@@ -17,7 +27,7 @@ function Filter({ filter, handleFilterChange }) {
           style={styles.input}
           type="text"
           name="filter"
-          value={filter}
+          // value={filter}
           onChange={handleFilterChange}
         ></input>
       </label>
